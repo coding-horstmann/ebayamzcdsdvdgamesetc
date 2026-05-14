@@ -120,6 +120,7 @@ function productTypeLabel(type: ProductType): string {
   if (type === "CD") return "CD";
   if (type === "DVD") return "DVD/Blu-ray";
   if (type === "GAME") return "Game";
+  if (type === "FIGURE") return "Figur";
   return "Produkt";
 }
 

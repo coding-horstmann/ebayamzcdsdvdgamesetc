@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 const PAGE_SIZE = 50;
 const SORTS = ["best_roi", "best_profit", "bsr", "checked"] as const;
-const PRODUCT_TYPES = ["BOARD_GAME", "CD", "DVD", "GAME"] as const;
+const PRODUCT_TYPES = ["BOARD_GAME", "CD", "DVD", "GAME", "FIGURE"] as const;
 
 type BuyingOption = "all" | "fixed" | "auction";
 type SortBy = (typeof SORTS)[number];

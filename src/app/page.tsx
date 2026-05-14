@@ -15,7 +15,7 @@ type SearchParams = {
 };
 
 const sortOptions = ["best_roi", "best_profit", "bsr", "checked"] as const;
-const productTypes = ["all", "BOARD_GAME", "CD", "DVD", "GAME"] as const;
+const productTypes = ["all", "BOARD_GAME", "CD", "DVD", "GAME", "FIGURE"] as const;
 
 function parseSortBy(value: string | undefined): Filters["sortBy"] {
   return sortOptions.includes(value as Filters["sortBy"])

@@ -8,7 +8,7 @@ export type Filters = {
   minRoi: number;
   maxBsr: number;
   minSales: number;
-  productType: "all" | "BOARD_GAME" | "CD" | "DVD" | "GAME";
+  productType: "all" | "BOARD_GAME" | "CD" | "DVD" | "GAME" | "FIGURE";
   buyingOption: "all" | "fixed" | "auction";
   sortBy: "best_roi" | "best_profit" | "bsr" | "checked";
 };
@@ -95,6 +95,7 @@ export default function FilterPanel({ initial }: { initial: Filters }) {
           <option value="CD">CDs</option>
           <option value="DVD">DVD/Blu-ray</option>
           <option value="GAME">Games</option>
+          <option value="FIGURE">Figuren</option>
         </select>
       </label>
       <div className="flex flex-col gap-1 lg:col-span-2">

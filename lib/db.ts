@@ -5,7 +5,7 @@ const { Pool, types } = pg;
 types.setTypeParser(20, (value) => Number.parseInt(value, 10));
 types.setTypeParser(1700, (value) => Number.parseFloat(value));
 
-export type ProductType = "BOARD_GAME" | "CD" | "DVD" | "GAME";
+export type ProductType = "BOARD_GAME" | "CD" | "DVD" | "GAME" | "FIGURE";
 
 export type ProductRow = {
   id: number;

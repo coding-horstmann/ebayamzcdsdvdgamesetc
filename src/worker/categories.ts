@@ -44,6 +44,12 @@ export function getProductCategories(): ProductCategory[] {
       categoryId: envInt("KEEPA_GAME_CATEGORY_ID", 300992),
       finderMode: "root",
     },
+    {
+      type: "FIGURE",
+      label: "Figuren",
+      categoryId: envInt("KEEPA_FIGURE_CATEGORY_ID", 27087992031),
+      finderMode: "include",
+    },
   ];
 }
 

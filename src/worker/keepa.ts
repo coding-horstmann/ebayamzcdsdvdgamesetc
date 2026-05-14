@@ -2,7 +2,7 @@
  * Keepa API client for physical media and games.
  * --------------------------------------------------------------------
  * Uses Keepa Product Finder to walk the best seller ranks for:
- * Brettspiele, CDs, DVD/Blu-ray and Games on Amazon.de.
+ * Brettspiele, CDs, DVD/Blu-ray, Games and figures on Amazon.de.
  *
  * The book scanner was ISBN-first. For these categories we keep that same
  * precision principle by requiring a GTIN/EAN/UPC from Keepa before a product
@@ -314,6 +314,25 @@ function isLikelyPhysicalCategoryProduct(p: KeepaRawProduct, category: ProductCa
       group.includes("video game") ||
       group.includes("videogame") ||
       group.includes("games")
+    );
+  }
+
+  if (category.type === "FIGURE") {
+    return (
+      hasCategory ||
+      group.includes("toy") ||
+      group.includes("spielzeug") ||
+      containsAny(textOf(p), [
+        "actionfigur",
+        "action figure",
+        "sammelfigur",
+        "spielfigur",
+        "figure",
+        "figur",
+        "funko",
+        "amiibo",
+        "nendoroid",
+      ])
     );
   }
 
