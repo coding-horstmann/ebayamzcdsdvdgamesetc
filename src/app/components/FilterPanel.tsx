@@ -10,6 +10,7 @@ export type Filters = {
   minSales: number;
   productType: "all" | "BOARD_GAME" | "CD" | "DVD" | "GAME";
   buyingOption: "all" | "fixed" | "auction";
+  ebayCondition: "all" | "new" | "used";
   sortBy: "best_roi" | "best_profit" | "bsr" | "checked";
 };
 
@@ -24,6 +25,7 @@ export default function FilterPanel({ initial }: { initial: Filters }) {
   const [minSales, setMinSales] = useState(initial.minSales);
   const [productType, setProductType] = useState(initial.productType);
   const [buyingOption, setBuyingOption] = useState(initial.buyingOption);
+  const [ebayCondition, setEbayCondition] = useState(initial.ebayCondition);
   const [sortBy, setSortBy] = useState(initial.sortBy);
 
   function applyFilters(overrides: Partial<Filters> = {}) {
@@ -34,6 +36,7 @@ export default function FilterPanel({ initial }: { initial: Filters }) {
     params.set("minSales", String(overrides.minSales ?? minSales));
     params.set("productType", overrides.productType ?? productType);
     params.set("buyingOption", overrides.buyingOption ?? buyingOption);
+    params.set("ebayCondition", overrides.ebayCondition ?? ebayCondition);
     params.set("sortBy", overrides.sortBy ?? sortBy);
     startTransition(() => {
       router.push(`/?${params.toString()}`);
@@ -49,7 +52,7 @@ export default function FilterPanel({ initial }: { initial: Filters }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-9"
+      className="grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-10"
     >
       <Field
         label="Mindest-Profit (€)"
@@ -115,6 +118,33 @@ export default function FilterPanel({ initial }: { initial: Filters }) {
               }}
               className={
                 buyingOption === value
+                  ? "rounded bg-white text-slate-900 shadow-sm"
+                  : "rounded text-slate-500 hover:text-slate-900"
+              }
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-1 lg:col-span-2">
+        <span className="text-xs font-medium text-slate-600">eBay-Zustand</span>
+        <div className="grid h-10 grid-cols-3 rounded-md border border-slate-300 bg-slate-50 p-0.5 text-xs font-medium">
+          {[
+            ["all", "Alle"],
+            ["new", "Neu"],
+            ["used", "Gebraucht"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => {
+                const next = value as Filters["ebayCondition"];
+                setEbayCondition(next);
+                applyFilters({ ebayCondition: next });
+              }}
+              className={
+                ebayCondition === value
                   ? "rounded bg-white text-slate-900 shadow-sm"
                   : "rounded text-slate-500 hover:text-slate-900"
               }
