@@ -10,6 +10,7 @@ const SORTS = ["best_roi", "best_profit", "bsr", "checked"] as const;
 const PRODUCT_TYPES = ["BOARD_GAME", "CD", "DVD", "GAME"] as const;
 
 type BuyingOption = "all" | "fixed" | "auction";
+type EbayConditionFilter = "all" | "new" | "used";
 type SortBy = (typeof SORTS)[number];
 type ProductTypeFilter = "all" | ProductType;
 
@@ -21,6 +22,10 @@ function num(v: string | null, fallback: number): number {
 
 function parseBuyingOption(value: string | null): BuyingOption {
   return value === "fixed" || value === "auction" ? value : "all";
+}
+
+function parseEbayCondition(value: string | null): EbayConditionFilter {
+  return value === "new" || value === "used" ? value : "all";
 }
 
 function parseSortBy(value: string | null): SortBy {
@@ -61,6 +66,7 @@ export async function GET(req: NextRequest) {
   const minSales = num(searchParams.get("minSales"), 0);
   const productType = parseProductType(searchParams.get("productType"));
   const buyingOption = parseBuyingOption(searchParams.get("buyingOption"));
+  const ebayCondition = parseEbayCondition(searchParams.get("ebayCondition"));
   const sortBy = parseSortBy(searchParams.get("sortBy"));
   const page = Math.max(0, Math.floor(num(searchParams.get("page"), 0)));
 
@@ -75,16 +81,25 @@ export async function GET(req: NextRequest) {
   }
   if (buyingOption === "auction") {
     where.push("ebay_auction_price is not null");
+    if (ebayCondition !== "all") {
+      where.push(`ebay_auction_condition = ${addParam(params, ebayCondition.toUpperCase())}`);
+    }
     where.push("auction_profit_euro > 0");
     where.push(`auction_profit_euro >= ${addParam(params, minProfit)}`);
     where.push(`auction_roi_pct >= ${addParam(params, minRoi)}`);
   } else if (buyingOption === "fixed") {
     where.push("ebay_fixed_price is not null");
+    if (ebayCondition !== "all") {
+      where.push(`ebay_fixed_condition = ${addParam(params, ebayCondition.toUpperCase())}`);
+    }
     where.push("fixed_profit_euro > 0");
     where.push(`fixed_profit_euro >= ${addParam(params, minProfit)}`);
     where.push(`fixed_roi_pct >= ${addParam(params, minRoi)}`);
   } else {
     where.push("ebay_price is not null");
+    if (ebayCondition !== "all") {
+      where.push(`ebay_condition = ${addParam(params, ebayCondition.toUpperCase())}`);
+    }
     where.push("profit_euro > 0");
     where.push(`profit_euro >= ${addParam(params, minProfit)}`);
     where.push(`roi_pct >= ${addParam(params, minRoi)}`);
