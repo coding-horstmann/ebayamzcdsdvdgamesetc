@@ -2,7 +2,7 @@
  * Keepa API client for physical media and games.
  * --------------------------------------------------------------------
  * Uses Keepa Product Finder to walk the best seller ranks for:
- * Brettspiele, CDs, DVD/Blu-ray, Games and figures on Amazon.de.
+ * Brettspiele, CDs, DVD/Blu-ray, Games, figures, puzzles, vinyl and model kits on Amazon.de.
  *
  * The book scanner was ISBN-first. For these categories we keep that same
  * precision principle by requiring a GTIN/EAN/UPC from Keepa before a product
@@ -78,6 +78,8 @@ type KeepaRawProduct = {
   eanList?: string[] | null;
   upcList?: string[] | null;
   productGroup?: string | null;
+  binding?: string | null;
+  format?: string | null;
   categoryTree?: KeepaCategoryTreeEntry[] | null;
 };
 
@@ -232,9 +234,10 @@ function hasCategoryEvidence(p: KeepaRawProduct, categoryId: number): boolean {
 }
 
 function textOf(p: KeepaRawProduct): string {
-  return `${p.title ?? ""} ${p.brand ?? ""} ${p.manufacturer ?? ""} ${p.productGroup ?? ""}`
+  return `${p.title ?? ""} ${p.brand ?? ""} ${p.manufacturer ?? ""} ${p.productGroup ?? ""} ${p.binding ?? ""} ${p.format ?? ""}`
     .toLowerCase()
-    .normalize("NFKD");
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function containsAny(text: string, words: string[]): boolean {
@@ -289,6 +292,71 @@ function isLikelyGameHardware(p: KeepaRawProduct): boolean {
   ]);
 }
 
+function isLikelyVinylRecord(p: KeepaRawProduct): boolean {
+  const binding = (p.binding ?? "").toLowerCase();
+  const format = (p.format ?? "").toLowerCase();
+  const text = textOf(p);
+
+  return (
+    binding.includes("lp_record") ||
+    binding.includes("vinyl") ||
+    format.includes("vinyl") ||
+    text.includes("[vinyl") ||
+    text.includes("vinyl lp") ||
+    text.includes(" lp]") ||
+    text.includes("2lp") ||
+    text.includes("3lp")
+  );
+}
+
+function isLikelyPuzzleAccessory(p: KeepaRawProduct): boolean {
+  const text = textOf(p);
+  return containsAny(text, [
+    "puzzle-zubehor",
+    "puzzlezubehor",
+    "puzzle zubehor",
+    "puzzle accessory",
+    "puzzlematte",
+    "puzzle mat",
+    "puzzlekleber",
+    "puzzle glue",
+    "sortierer",
+    "sorting tray",
+    "aufbewahrung",
+    "storage",
+  ]);
+}
+
+function isLikelyModelKitAccessory(p: KeepaRawProduct): boolean {
+  const text = textOf(p);
+  return containsAny(text, [
+    "zubehor",
+    "accessory",
+    "werkzeug",
+    "tool",
+    "farbe",
+    "paint",
+    "kleber",
+    "glue",
+    "schraube",
+    "screw",
+    "ersatzteil",
+    "spare part",
+    "motor",
+    "akku",
+    "battery",
+    "ladegerat",
+    "charger",
+    "servo",
+    "adapter",
+    "kabel",
+    "cable",
+    "controller",
+    "fernbedienung",
+    "remote",
+  ]);
+}
+
 function isLikelyPhysicalCategoryProduct(p: KeepaRawProduct, category: ProductCategory): boolean {
   if (isNonPhysical(p)) return false;
 
@@ -300,6 +368,7 @@ function isLikelyPhysicalCategoryProduct(p: KeepaRawProduct, category: ProductCa
   }
 
   if (category.type === "CD") {
+    if (isLikelyVinylRecord(p)) return false;
     return hasCategory || group.includes("music") || group.includes("musik");
   }
 
@@ -332,6 +401,30 @@ function isLikelyPhysicalCategoryProduct(p: KeepaRawProduct, category: ProductCa
         "funko",
         "amiibo",
         "nendoroid",
+      ])
+    );
+  }
+
+  if (category.type === "PUZZLE") {
+    if (isLikelyPuzzleAccessory(p)) return false;
+    return hasCategory || containsAny(textOf(p), ["puzzle", "puzzles"]);
+  }
+
+  if (category.type === "VINYL") {
+    return isLikelyVinylRecord(p);
+  }
+
+  if (category.type === "MODEL_KIT") {
+    if (isLikelyModelKitAccessory(p)) return false;
+    return (
+      hasCategory ||
+      containsAny(textOf(p), [
+        "modellbausatz",
+        "model kit",
+        "bausatz",
+        "diorama",
+        "standmodell",
+        "modellbau",
       ])
     );
   }

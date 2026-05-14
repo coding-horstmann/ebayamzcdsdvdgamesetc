@@ -121,6 +121,9 @@ function productTypeLabel(type: ProductType): string {
   if (type === "DVD") return "DVD/Blu-ray";
   if (type === "GAME") return "Game";
   if (type === "FIGURE") return "Figur";
+  if (type === "PUZZLE") return "Puzzle";
+  if (type === "VINYL") return "Schallplatte";
+  if (type === "MODEL_KIT") return "Modellbau";
   return "Produkt";
 }
 

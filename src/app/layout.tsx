@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "MediaScout DE",
   description:
-    "Online-Arbitrage fuer Brettspiele, CDs, DVD/Blu-ray, Games und Figuren zwischen eBay.de und Amazon.de.",
+    "Online-Arbitrage fuer Brettspiele, CDs, DVD/Blu-ray, Games, Figuren, Puzzles, Schallplatten und Modellbau zwischen eBay.de und Amazon.de.",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
                     MediaScout DE
                   </h1>
                   <p className="text-sm text-slate-500">
-                    Brettspiele, CDs, DVD/Blu-ray, Games und Figuren per GTIN abgleichen.
+                    Brettspiele, CDs, DVD/Blu-ray, Games, Figuren, Puzzles, Schallplatten und Modellbau per GTIN abgleichen.
                   </p>
                 </div>
               </div>

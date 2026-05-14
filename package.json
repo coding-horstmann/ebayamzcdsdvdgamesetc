@@ -2,7 +2,7 @@
   "name": "media-scout-de",
   "version": "1.0.0",
   "private": true,
-  "description": "MediaScout DE - Online-Arbitrage-Tool fuer Brettspiele, CDs, DVD/Blu-ray, Games und Figuren",
+  "description": "MediaScout DE - Online-Arbitrage-Tool fuer Brettspiele, CDs, DVD/Blu-ray, Games, Figuren, Puzzles, Schallplatten und Modellbau",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

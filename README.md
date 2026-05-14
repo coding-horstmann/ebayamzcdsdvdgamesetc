@@ -1,7 +1,8 @@
 # MediaScout DE
 
 Online-Arbitrage-Tool fuer physische Produkte in diesen Amazon.de-Kategorien:
-Brettspiele, CDs, DVD/Blu-ray, Games und Figuren. Der Worker zieht Amazon-Daten ueber
+Brettspiele, CDs, DVD/Blu-ray, Games, Figuren, Puzzles, Schallplatten und
+Modellbau. Der Worker zieht Amazon-Daten ueber
 Keepa, sucht passende eBay.de-Angebote per GTIN/EAN/UPC und zeigt moegliche
 Deals im Dashboard.
 
@@ -13,6 +14,7 @@ Das Projekt ist bewusst ein eigenstaendiger Scanner und veraendert
 - Keepa Product Finder laeuft auf Amazon.de (`domain=3`).
 - Pro Kategorie werden standardmaessig die besten `15000` BSR rotiert.
 - Gespeichert und auf eBay gesucht werden nur Produkte mit physischem GTIN/EAN/UPC.
+- eBay-Ergebnisse werden nur als neu akzeptiert.
 - Games werden zusaetzlich gegen offensichtliche Download-Codes, Gutscheine,
   Konsolen und Zubehoer gefiltert.
 - eBay-Suche nutzt `gtin=GTIN`, nicht Titel-Fallback. Das ist die Entsprechung zur
@@ -64,6 +66,9 @@ Keepa-Kategorie-IDs sind als ENV ueberschreibbar:
 | `KEEPA_DVD_CATEGORY_ID` | `284266` |
 | `KEEPA_GAME_CATEGORY_ID` | `300992` |
 | `KEEPA_FIGURE_CATEGORY_ID` | `27087992031` |
+| `KEEPA_PUZZLE_CATEGORY_ID` | `360541031` |
+| `KEEPA_VINYL_CATEGORY_ID` | `255882` |
+| `KEEPA_MODEL_KIT_CATEGORY_ID` | `360488031` |
 
 Optional:
 

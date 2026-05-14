@@ -4,7 +4,7 @@
 create table if not exists products (
   id              bigserial primary key,
   asin            text not null unique,
-  product_type    text not null check (product_type in ('BOARD_GAME','CD','DVD','GAME','FIGURE')),
+  product_type    text not null check (product_type in ('BOARD_GAME','CD','DVD','GAME','FIGURE','PUZZLE','VINYL','MODEL_KIT')),
   product_code    text,
   title           text,
   brand           text,
@@ -74,7 +74,7 @@ alter table products
 
 alter table products
   add constraint products_product_type_check
-  check (product_type in ('BOARD_GAME','CD','DVD','GAME','FIGURE'));
+  check (product_type in ('BOARD_GAME','CD','DVD','GAME','FIGURE','PUZZLE','VINYL','MODEL_KIT'));
 
 create index if not exists products_product_type_idx on products (product_type);
 create index if not exists products_product_code_idx on products (product_code);

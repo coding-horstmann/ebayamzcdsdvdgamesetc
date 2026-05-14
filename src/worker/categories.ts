@@ -50,6 +50,24 @@ export function getProductCategories(): ProductCategory[] {
       categoryId: envInt("KEEPA_FIGURE_CATEGORY_ID", 27087992031),
       finderMode: "include",
     },
+    {
+      type: "PUZZLE",
+      label: "Puzzles",
+      categoryId: envInt("KEEPA_PUZZLE_CATEGORY_ID", 360541031),
+      finderMode: "include",
+    },
+    {
+      type: "VINYL",
+      label: "Schallplatten",
+      categoryId: envInt("KEEPA_VINYL_CATEGORY_ID", 255882),
+      finderMode: "include",
+    },
+    {
+      type: "MODEL_KIT",
+      label: "Modellbau",
+      categoryId: envInt("KEEPA_MODEL_KIT_CATEGORY_ID", 360488031),
+      finderMode: "include",
+    },
   ];
 }
 
