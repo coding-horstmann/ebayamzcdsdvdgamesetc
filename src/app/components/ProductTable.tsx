@@ -22,7 +22,7 @@ export default function ProductTable({ filters }: { filters: Filters }) {
 
   const filtersKey = useMemo(
     () =>
-      `${filters.minProfit}|${filters.minRoi}|${filters.maxBsr}|${filters.minSales}|${filters.productType}|${filters.buyingOption}|${filters.ebayCondition}|${filters.sortBy}`,
+      `${filters.minProfit}|${filters.minRoi}|${filters.maxBsr}|${filters.minSales}|${filters.productType}|${filters.buyingOption}|${filters.sortBy}`,
     [filters]
   );
 
@@ -38,7 +38,6 @@ export default function ProductTable({ filters }: { filters: Filters }) {
           minSales: String(filters.minSales),
           productType: filters.productType,
           buyingOption: filters.buyingOption,
-          ebayCondition: filters.ebayCondition,
           sortBy: filters.sortBy,
           page: String(pageToLoad),
         });
