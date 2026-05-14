@@ -11,11 +11,13 @@ type SearchParams = {
   minSales?: string;
   productType?: string;
   buyingOption?: string;
+  ebayCondition?: string;
   sortBy?: string;
 };
 
 const sortOptions = ["best_roi", "best_profit", "bsr", "checked"] as const;
 const productTypes = ["all", "BOARD_GAME", "CD", "DVD", "GAME"] as const;
+const ebayConditions = ["all", "new", "used"] as const;
 
 function parseSortBy(value: string | undefined): Filters["sortBy"] {
   return sortOptions.includes(value as Filters["sortBy"])
@@ -26,6 +28,12 @@ function parseSortBy(value: string | undefined): Filters["sortBy"] {
 function parseProductType(value: string | undefined): Filters["productType"] {
   return productTypes.includes(value as Filters["productType"])
     ? (value as Filters["productType"])
+    : "all";
+}
+
+function parseEbayCondition(value: string | undefined): Filters["ebayCondition"] {
+  return ebayConditions.includes(value as Filters["ebayCondition"])
+    ? (value as Filters["ebayCondition"])
     : "all";
 }
 
@@ -40,6 +48,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
       searchParams.buyingOption === "fixed" || searchParams.buyingOption === "auction"
         ? searchParams.buyingOption
         : "all",
+    ebayCondition: parseEbayCondition(searchParams.ebayCondition),
     sortBy: parseSortBy(searchParams.sortBy),
   };
 
