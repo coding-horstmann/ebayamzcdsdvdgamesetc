@@ -21,13 +21,13 @@ export type EbayHit = {
   shipping: number;
   itemWebUrl: string | null;
   imageUrl: string | null;
-  /** Kategorisierung für UI/DB: "NEW" bei Condition 1000/1500, sonst "USED". */
+  /** Kategorisierung für UI/DB. Der Scanner akzeptiert aktuell nur NEW. */
   condition: EbayConditionCategory;
   /** Angebotsart: Sofortkauf oder Auktion. */
   buyingOption: EbayBuyingOption;
   /** Original-Condition-Text von eBay (z.B. "Neu", "Gebraucht", "Sehr gut") */
   conditionText: string | null;
-  /** Numerische eBay-Condition-ID (1000, 1500, 3000, 4000, 5000) */
+  /** Numerische eBay-Condition-ID (1000, 1500) */
   conditionId: number | null;
   endTime: string | null;
   bidCount: number | null;
@@ -37,14 +37,9 @@ export type EbayHit = {
  * Welche eBay-Condition-IDs MediaScout akzeptiert:
  *   1000 – New
  *   1500 – New other (see details)
- *   3000 – Used
- *   4000 – Very Good
- *   5000 – Good
- * Explizit ausgeschlossen:
- *   2000 / 2500 – Refurbished
- *   6000        – Acceptable
+ * Gebrauchte, refurbished und acceptable Listings sind ausgeschlossen.
  */
-export const EBAY_ACCEPTED_CONDITION_IDS = [1000, 1500, 3000, 4000, 5000] as const;
+export const EBAY_ACCEPTED_CONDITION_IDS = [1000, 1500] as const;
 const ACCEPTED_SET = new Set<number>(EBAY_ACCEPTED_CONDITION_IDS);
 const NEW_CONDITION_IDS = new Set<number>([1000, 1500]);
 
@@ -56,6 +51,7 @@ type EbayTokenResponse = {
 
 type EbayItemSummary = {
   itemId?: string;
+  title?: string;
   price?: { value?: string; currency?: string };
   currentBidPrice?: { value?: string; currency?: string };
   shippingOptions?: Array<{
@@ -280,7 +276,7 @@ type SearchAttempt = { mode: "gtin" | "q"; value: string };
 
 function buildSearchAttempts(opts: SearchOpts): SearchAttempt[] {
   const gtin = opts.gtin?.trim();
-  if (gtin && /^\d{8,14}$/.test(gtin)) return [{ mode: "q", value: gtin }];
+  if (gtin && /^\d{8,14}$/.test(gtin)) return [{ mode: "gtin", value: gtin }];
 
   const asin = opts.asin?.trim();
   if (asin && /^\d{9}[\dXx]$/.test(asin)) return [{ mode: "q", value: asin }];
@@ -302,13 +298,19 @@ function parseConditionId(raw: unknown): number | null {
   return null;
 }
 
+function hasBlockedTitleKeyword(title: string | null | undefined): boolean {
+  const text = (title ?? "").toLocaleLowerCase("de-DE");
+  return text.includes("code") || text.includes("digital") || text.includes("download");
+}
+
 function itemToHit(item: EbayItemSummary, requestedBuyingOption: EbayBuyingOption): EbayHit | null {
   if (!item.buyingOptions?.includes(requestedBuyingOption)) return null;
+  if (hasBlockedTitleKeyword(item.title)) return null;
 
   const conditionId = parseConditionId(item.conditionId);
   // Zusätzliche Absicherung: eBay sollte das per Filter gar nicht liefern,
   // aber falls doch, lieber verwerfen.
-  if (conditionId !== null && !ACCEPTED_SET.has(conditionId)) return null;
+  if (conditionId === null || !ACCEPTED_SET.has(conditionId)) return null;
 
   const priceStr =
     requestedBuyingOption === "AUCTION"
@@ -350,10 +352,8 @@ function itemToHit(item: EbayItemSummary, requestedBuyingOption: EbayBuyingOptio
 }
 
 /**
- * Sucht das günstigste Exemplar (Neu oder Gebraucht) auf eBay.de.
- * Akzeptierte Conditions: 1000, 1500, 3000, 4000, 5000 – siehe
- * `EBAY_ACCEPTED_CONDITION_IDS`. Refurbished (2000/2500) und Acceptable (6000)
- * sind ausgeschlossen.
+ * Sucht das günstigste neue Exemplar auf eBay.de.
+ * Akzeptierte Conditions: 1000, 1500 – siehe `EBAY_ACCEPTED_CONDITION_IDS`.
  *
  * Sofortkauf (FIXED_PRICE) und Auktionen (AUCTION), Versand Deutschland, sortiert nach
  * Preis + Versand aufsteigend. Gibt `null` zurück, wenn nichts Passendes da ist.
